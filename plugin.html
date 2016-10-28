@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width" />
+	<meta charset="utf-8" />
+
+	<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+	<link href="css/bootstrap-datepicker3.css" rel="stylesheet" type="text/css" />
+	
+	<link href="css/leaflet.css" rel="stylesheet" type="text/css" />
+
+	<link href="fontello.css" rel="stylesheet" type="text/css" />
+	<link href="style.css" rel="stylesheet" type="text/css" />
+	
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700,400italic" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+	<div class="tab-content">
+
+		<div class="tab-pane tab-pane-main tab-pane-map" id="tab-pane-map">
+
+			<div class="tab-controls tab-controls-top-right">
+				<a href="#tab-pane-filtering" class="btn btn-primary btn-lg" aria-controls="tab-pane-filtering" role="tab" data-toggle="tab">Suodata</a>
+			</div>
+
+			<div class="map-canvas" id="map-canvas"></div>
+
+			<div class="map-controls map-controls-bottom-left" id="map-controls">
+				<button type="button" class="btn btn-primary btn-circle" tabindex="-1" data-action="zoom-fit"><span class="icon icon-resize-small"></span></button>
+				<button type="button" class="btn btn-primary btn-circle" tabindex="-1" data-action="zoom-in"><span class="icon icon-plus"></span></button>
+				<button type="button" class="btn btn-primary btn-circle" tabindex="-1" data-action="zoom-out"><span class="icon icon-minus"></span></button>
+			</div>
+
+		</div>
+
+		<div class="tab-pane tab-pane-side tab-pane-filtering active" id="tab-pane-filtering">
+
+			<div class="tab-controls tab-controls-top-right">
+				<a href="#tab-pane-map" class="btn btn-default btn-lg" aria-controls="tab-pane-map" role="tab" data-toggle="tab">Sulje</a>
+			</div>
+
+			<div class="container-fluid">
+
+				<h2 class="h4">Suodata</h2>
+
+				<form action="#">
+
+					<legend>Näytettävä aikaväli</legend>
+
+					<div class="form-group">
+
+						<div class="row">
+
+							<div class="col-xs-6">
+								<label for="">Alkaen</label>
+								<input type="text" class="form-control js-datepicker js-filter js-filter-start-date" id="filter-start-date" value="" />
+							</div>
+
+							<div class="col-xs-6">
+								<label for="">Päättyen</label>
+								<input type="text" class="form-control js-datepicker js-filter js-filter-end-date" id="filter-end-date" value="" />
+							</div>
+
+							<!--
+							<div class="col-xs-4">
+								<label for="">&nbsp;</label>
+								<input type="text" class="form-control js-timepicker js-filter js-filter-end-time" id="filter-end-time" value="" />
+							</div>
+							<div class="col-xs-4">
+								<label for="">&nbsp;</label>
+								<input type="text" class="form-control js-timepicker js-filter js-filter-start-time" id="filter-start-time" value="" />
+							</div>
+							-->
+
+						</div>
+
+					</div>
+
+					<legend>Näytettävät kategoriat</legend>
+
+					<div class="form-group">
+
+						<div class="checkbox">
+							<label><input type="checkbox" class="js-filter js-filter-label" data-label="60" checked="checked" />Väylä kunnossa</label>
+						</div>
+
+						<div class="checkbox">
+							<label><input type="checkbox" class="js-filter js-filter-label" data-label="61" checked="checked" />Väylä hoitamatta</label>
+						</div>
+
+						<div class="checkbox">
+							<label><input type="checkbox" class="js-filter js-filter-label" data-label="62" checked="checked" />Liikaa lunta</label>
+						</div>
+						
+						<div class="checkbox">
+							<label><input type="checkbox" class="js-filter js-filter-label" data-label="63" checked="checked" />Liikaa sohjoa</label>
+						</div>
+						
+						<div class="checkbox">
+							<label><input type="checkbox" class="js-filter js-filter-label" data-label="64" checked="checked" />Jäätä/polanne</label>
+						</div>
+						
+						<div class="checkbox">
+							<label><input type="checkbox" class="js-filter js-filter-label" data-label="65" checked="checked" />Jäisiä uria</label>
+						</div>
+						
+						<div class="checkbox">
+							<label><input type="checkbox" class="js-filter js-filter-label" data-label="66" checked="checked" />Lumivalleja</label>
+						</div>
+						
+						<div class="checkbox">
+							<label><input type="checkbox" class="js-filter js-filter-label" data-label="67" checked="checked" />Hiekkaa</label>
+						</div>
+						
+						<div class="checkbox">
+							<label><input type="checkbox" class="js-filter js-filter-label" data-label="68" checked="checked" />Vesilätäköitä</label>
+						</div>
+						
+						<div class="checkbox">
+							<label><input type="checkbox" class="js-filter js-filter-label" data-label="69" checked="checked" />Muu palaute</label>
+						</div>
+
+					</div>
+
+					<hr />
+
+					<a href="#tab-pane-map" class="btn btn-success btn-lg visible-xs" aria-controls="tab-pane-map" role="tab" data-toggle="tab">Valmis</a>
+
+				</form>
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<div class="hidden" id="popup-view-comments">
+
+		<h1 class="h4" data-view="title"></h1>
+		<div data-view="content"></div>
+		
+		<hr />
+
+		<span class="pull-right" data-view="label-count" data-label="60"></span>
+		<a href="#" class="text-success" data-action="submit-rating" data-label="60" data-title="Väylä kunnossa"><strong>Väylä kunnossa</strong></a>
+
+		<hr />
+
+		<span class="pull-right" data-view="label-count" data-label="61"></span>
+		<a href="#" class="text-danger" data-action="submit-rating" data-label="61" data-title="Väylä hoitamatta"><strong>Väylä hoitamatta</strong></a>
+
+		<hr />
+
+		<a href="#" class="" data-action="new-comment"><strong>Lisää muu merkintä tähän kohtaan</strong></a>
+
+		<hr />
+
+		<p class="text-right"><a href="#" class="btn btn-default" data-dismiss="popup">Sulje</a></p>
+
+	</div>
+
+	<div class="hidden" id="popup-view-comment">
+
+		<span class="pull-right">
+			<a href="#" data-action="submit-vote">^^^</a>
+			<span data-view="vote-count"></span>
+		</span>
+
+		<p><strong data-view="comment-author"></strong> · <span data-view="comment-date"></span></p>
+
+		<hr />
+
+		<p><img src="http://placehold.it/480x360" class="img-responsive" /></p>
+
+		<div data-view="comment-content"></div>
+		<p><span class="label label-danger" data-view="label-title"></span></p>
+
+		<hr />
+
+		<p class="text-right"><a href="#" class="btn btn-default" data-dismiss="popup">Sulje</a></p>
+
+	</div>
+
+	<div class="hidden" id="popup-add-comment">
+
+		<h1 class="h4">Lisää merkintä kartalle</h1>
+
+		<form>
+
+			<div class="form-group">
+				<label>Kategoria*</label>
+				<select class="form-control" name="label">
+					<option value="">Valitse</option>
+					<option value="60">Väylä kunnossa</option>
+					<option value="61">Väylä hoitamatta</option>
+					<option value="62">Liikaa lunta</option>
+					<option value="63">Liikaa sohjoa</option>
+					<option value="64">Jäätä/polanne</option>
+					<option value="65">Jäisiä uria</option>
+					<option value="66">Lumivalleja</option>
+					<option value="67">Hiekkaa</option>
+					<option value="68">Vesilätäköitä</option>
+					<option value="69">Muu palaute</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label>Lisätiedot</label>
+				<textarea class="form-control input-sm" placeholder="Lisää tarvittaessa tarkempi kuvaus" name="content"></textarea>
+			</div>
+
+			<div class="form-group">
+				<label >Kuva</label>
+				<canvas class="image-preview" id="image-preview" for="image-input"></canvas>
+				<input type="file" class="form-control image-input" name="image" id="image-input" />		
+			</div>
+
+			<hr />
+
+			<p class="text-right">
+				<button class="btn btn-default" type="reset" data-dismiss="popup">Peruuta</button>
+				<button class="btn btn-success" type="submit" data-action="submit-comment">Tallenna</button>
+			</p>
+
+		</form>
+
+	</div>
+
+	<script src="js/vendor/handlebars-4.0.5.js"></script>
+	
+	<script src="js/vendor/jquery-2.2.4.js"></script>
+	<script src="js/vendor/jquery.bootstrap.js"></script>
+
+	<script src="js/vendor/bootstrap-datepicker.js"></script>
+	<script src="js/vendor/leaflet.js"></script>
+
+	<script src="js/vendor/exif.js"></script>
+	<script src="js/vendor/canvas-image-uploader.js"></script>
+
+	<script src="js/vendor/proj4.js"></script>
+	<script src="js/vendor/proj4leaflet.js"></script>
+
+	<script src="js/m.js"></script>
+
+</body>
+</html>

@@ -731,7 +731,7 @@ map.updatePopups = function(event) {
     data.content = $form.find('[name="content"]').val();
     data.label = $form.find('[name="label"]').val();
     if ($imagePreview && $imagePreview.attr('width') && $imagePreview.attr('height'))
-      data.image = $imagePreview[0].toDataURL();
+      data.imageUrl = $imagePreview[0].toDataURL();
     data.latlng = latlng;
     data.selected = selected;
     messageParent('userData', prepareComment(data));

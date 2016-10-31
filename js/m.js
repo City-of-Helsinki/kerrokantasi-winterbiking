@@ -606,7 +606,9 @@ function prepareComment(data) {
   }
 
   if (data.hasOwnProperty('content')) {
-    comment.content = data.content;
+    comment.content = data.content || '';
+  } else {
+    comment.content = '';
   }
 
   if (data.hasOwnProperty('imageUrl')) {
@@ -756,7 +758,8 @@ map.updatePopups = function(event) {
   // rating = comment with a label that provides a positive or negative vote
   $popup.on('click', '[data-action="submit-rating"]', function(e) {
     e.preventDefault();
-    var data = $(this).data(); 
+    var data = $(this).data();
+    data.content = '';
     data.latlng = latlng;
     data.selected = selected;
     messageParent('userData', prepareComment(data));
@@ -810,7 +813,7 @@ map.updatePopups = function(event) {
   $formSubmit.on('click', function(e) {
     e.preventDefault();
     var data = {};
-    data.content = $commentContent.val();
+    data.content = $commentContent.val() || '';
     data.label = $commentLabel.val();
     if ($imagePreview && $imagePreview.attr('width') && $imagePreview.attr('height')) {
       data.imageUrl = $imagePreview[0].toDataURL();

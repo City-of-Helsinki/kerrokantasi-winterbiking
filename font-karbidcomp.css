@@ -1,0 +1,66 @@
+@font-face{
+	font-family: KarbidComp;
+	src:	url(https://kerrokantasi.hel.fi/96a043d9ba931e15573e8938527874d1.eot?#iefix) format("embedded-opentype"),
+			url(https://kerrokantasi.hel.fi/dc77dcbf894366777ae590e09c553a29.woff) format("woff"),
+			url(https://kerrokantasi.hel.fi/7c7dc9ff713b3b146d3d3df1a3257cb5.ttf) format("truetype");
+	font-style: normal;
+	font-weight:400
+}
+@font-face{
+	font-family: KarbidComp;
+	src:	url(https://kerrokantasi.hel.fi/4dc08e6f65a348831ea7840a137f26b6.eot?#iefix) format("embedded-opentype"),
+			url(https://kerrokantasi.hel.fi/0c8fd9623b32227af17316dd306ec7c9.woff) format("woff"),
+			url(https://kerrokantasi.hel.fi/90908c7a11606404b9ef469636f8e2e3.ttf) format("truetype");
+	font-style: normal;
+	font-weight: 700
+}
+@font-face{
+	font-family: KarbidComp;
+	src: 	url(https://kerrokantasi.hel.fi/74a76b62ea93621b9b5725ecc7e373e0.eot?#iefix) format("embedded-opentype"),
+			url(https://kerrokantasi.hel.fi/a91247808ca5ca2ee5bbd5e2f20761bd.woff) format("woff"),
+			url(https://kerrokantasi.hel.fi/f19b94354549d09f3371cf9f37b7af9f.ttf) format("truetype");
+	font-style: normal;
+	font-weight: 900
+}
+@font-face{
+	font-family: KarbidComp;
+	src: 	url(https://kerrokantasi.hel.fi/333301c9df97fb4c996a5e84d309d5cf.eot?#iefix) format("embedded-opentype"),
+			url(https://kerrokantasi.hel.fi/149f8ddac16bfa53754a78ead04fe789.woff) format("woff"),
+			url(https://kerrokantasi.hel.fi/0c07e45aabad465a8785b3d85d2e2877.ttf) format("truetype");
+	font-style: italic;
+	font-weight: 700
+}
+@font-face{
+	font-family: KarbidSlabComp;
+	src:	url(https://kerrokantasi.hel.fi/493dab742d19f52f93acaca097fb283c.eot?#iefix) format("embedded-opentype"),
+			url(https://kerrokantasi.hel.fi/328752068cfa702cc465e5cecfb6d7f0.woff) format("woff"),
+			url(https://kerrokantasi.hel.fi/016e436bc5f3099302f13f537cc4a1d5.ttf) format("truetype");
+	font-style: normal;
+	font-weight: 400
+}
+@font-face{
+	font-family: KarbidSlabComp;
+	src:	url(https://kerrokantasi.hel.fi/66fe530102260d6cb62a42e582a7121f.eot?#iefix) format("embedded-opentype"),
+			url(https://kerrokantasi.hel.fi/0539b64764d71a68733eed96a5d583c3.woff) format("woff"),
+			url(https://kerrokantasi.hel.fi/b8e36729947f9f2cd386503eaca7faf5.ttf) format("truetype");
+	font-style: normal;
+	font-weight: 700
+}
+
+@font-face{
+	font-family: KarbidSlabComp;
+	src:	url(https://kerrokantasi.hel.fi/4947fa05134d97d141d3053d2b860fd9.eot?#iefix) format("embedded-opentype"),
+			url(https://kerrokantasi.hel.fi/b1ccbda00ddf8131cf8e1df1de9dfc26.woff) format("woff"),
+			url(https://kerrokantasi.hel.fi/ad9b40f7598bf9619115b3789e1fd5ac.ttf) format("truetype");
+	font-style: normal;
+	font-weight:900
+}
+
+@font-face{
+	font-family: KarbidSlabComp;
+	src:	url(https://kerrokantasi.hel.fi/2c25ba8769a2fdb18284e6e2b48b7230.eot?#iefix) format("embedded-opentype"),
+			url(https://kerrokantasi.hel.fi/a09de0c95693c5c4c8dea67db489bb22.woff) format("woff"),
+			url(https://kerrokantasi.hel.fi/cf3612b31ffac348fcc3badb80497970.ttf) format("truetype");
+	font-style: italic;
+	font-weight: 700
+}

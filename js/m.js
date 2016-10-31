@@ -17,23 +17,22 @@ M = function(settings) {
 
   var self = this;
 
-  var _canvas = this.canvas = L.map(settings.container, {
+  this.canvas = L.map(settings.container, {
     closePopupOnClick: false,
     continuousWorld: true,
     crs: settings.crs,
     maxZoom: 15,
     minZoom: 3,
     layers: settings.layers,
-    zoomControl: false,
     worldLatLngs: settings.worldLatLngs
   });
   
-  var _features = this.features = L.featureGroup();
-  var _selected = this.selected = L.featureGroup();
-  var _visible = this.visible = L.featureGroup();
-  var _focused = this.focused = null;
+  this.features = L.featureGroup();
+  this.selected = L.featureGroup();
+  this.visible = L.featureGroup();
+  this.focused = null;
   
-  var _filters = this.filters = {};
+  this.filters = {};
 
   this.addGeoJSON = function(data) {  
 
@@ -49,9 +48,9 @@ M = function(settings) {
     
     }
 
-    this.update();
+    self.update();
 
-    return true;
+    return self;
   
   }
 
@@ -59,21 +58,24 @@ M = function(settings) {
 
     // A shortcut function for adding a temporary comment marker on canvas
 
-    var latlng = event.latlng;
-    var marker = L.marker(latlng, { draggable: true });
+    var selected = self.getSelected();
+    var latlng = (selected) ? selected.getPopup().getLatLng() : event.latlng;
+   
+    var layer = L.marker(latlng, { /* draggable: true */ }); 
+    // prevent dragging for now... as leaflet messes up image uploading by closing the popup in wrong situations
 
-    // Extend marker with GeoJSON like properties
-    marker.feature = {
+    // Extend marker with GeoJSON like properties so that markers and polygons can be treated in same manner
+    layer.feature = {
       properties : {
-        'template' : 'popup-add-comment',
+        'template' : 'template-add-comment',
         'temporary' : true
       }
     }
 
-    self.prepareLayer(marker);
-    self.openPopup(event, marker);
+    self.prepareLayer(layer);
+    self.openPopup(layer, latlng);
 
-    return marker;
+    return layer;
 
   }
 
@@ -85,16 +87,55 @@ M = function(settings) {
     var geometry = feature.geometry;
     var properties = feature.properties;
 
+    var options = properties.options;
+    var style = properties.style;
+
+    // Define hover styles for more complex shapes
+    if (style) {
+      
+      layer.on('mouseover popupopen', function(e) {
+        style.opacity = 1;
+        this.setStyle(style);
+      });
+      
+      layer.on('mouseout popupclose', function(e) {
+        style.opacity = (this == self.getSelected()) ? 1 : .5;
+        this.setStyle(style);
+      });
+    
+    }
+
+    // This is a layer that can be dragged, re-open the popup that is closed by the dragstart event 
+    if (options && options.draggable === true) {
+
+      layer.on('dragend', function(e) {
+        layer.openPopup()
+      });
+
+    }
+
     layer.on('click', function(e) { 
-      self.openPopup(e, layer);
+      self.openPopup(layer, e.latlng);
     });
     
+
     if (properties.temporary) {
       
+      // Add temporary layer (new comment placeholders etc.) directly on map
+      // Remove placeholders when their popups are closed
+
+      layer.on('popupclose', function(e) {
+
+        self.canvas.removeLayer(layer);
+        self.canvas.closePopup();
+
+      });
+
       self.canvas.addLayer(layer);
     
     } else {
 
+      // Otherwise check if there's data which needs to be overwritten
       if (properties.hasOwnProperty('id')) {
         
         var existing = self.features.getLayerBy('id', properties.id);
@@ -103,7 +144,8 @@ M = function(settings) {
 
       if (existing) {
 
-        // There is data which needs to be overwritten. Delete all layers that represent the outdated data.
+        // Delete all layers that represent the outdated data
+
         self.canvas.removeLayer(existing);
         self.features.removeLayer(existing);
 
@@ -117,29 +159,42 @@ M = function(settings) {
 
   }
 
-  this.openPopup = function(event, layer) {
+  this.setSelected = function(layer) {
+
+    self.selected = L.featureGroup();
+    if (layer) self.selected.addLayer(layer);
+
+    return self.getSelected();
+
+  }
+
+  this.getSelected = function(layer) {
+
+    var selected = self.selected.getLayers();
+    
+    return (selected.length > 0) ? selected[0] : false;
+
+  }
+
+  this.openPopup = function(layer, latlng) {
 
     // A function for wiring additional behaviors to open popup event
 
-    // Remove existing popups
-    layer.unbindPopup();
-
-    // Store information about currently selected layer before preparing the popup
-    self.selected.clearLayers();
-    self.selected.addLayer(layer);
+    self.setSelected(layer);
 
     // Prepare stuff for popup
     var feature = layer.feature || event.target.feature;
     var properties = feature.properties;
-    var template = properties.template || 'popup-view-comment';
-    var content = document.getElementById(template).innerHTML;
-    var latlng = event.latlng || self.focused;
+    var focused = self.focused;
     
-    // Create popup with placeholder content
-    var popup = L.popup({ closeButton: false }).setContent(content);
-    
+    var latlng = latlng || focused;
+
+    //var popup = layer.getPopup() || L.popup({ closeButton: false, maxWidth: 240, minWidth: 240, maxHeight: 360 });    
+    var popup = L.popup({ closeButton: false, maxWidth: 240, minWidth: 240, maxHeight: 400 });    
+
+    layer.unbindPopup();
     layer.bindPopup(popup);
-	
+
     if (layer.hasOwnProperty('_latlngs')) {
       
       // This is a complex layer with more than one latlngs, manually move popup to the clicked location 
@@ -148,46 +203,25 @@ M = function(settings) {
     } else {
 
       // This is a simple layer with one latlng, let leaflet take care of the popup's location
-      layer.openPopup();
-
-    }
-
-    // This is a layer that can be dragged, re-open the popup that is closed by the dragstart event 
-    if (layer.hasOwnProperty('options') && layer.options.draggable === true) {
-
-      layer.on('dragend', function(e) { layer.openPopup() });
+      layer.openPopup(latlng);
 
     }
 
     // Store information about map's current focus after popup has been opened
-    self.focused = popup.getLatLng();
-
+    self.focused = latlng;
+    self.canvas.clicked = new Date();
+    
     return popup;
 
   }
 
   this.closePopup = function() {
 
-    // A function for wiring additional behaviors to close popup event
-
-    self.selected.eachLayer(function(layer) {
-      
-      var feature = layer.feature;
-      var properties = feature.properties;
-      
-      // Remove all temporary layers, when their popups are closed
-      if (properties.temporary) {
-        self.canvas.removeLayer(layer);
-      }
-    
-    });
-    
-    // Clear remaining storage
-    self.selected.clearLayers();
+    self.setSelected();
     self.canvas.closePopup();
     self.focused = null;
 
-    return true;
+    return self;
 
   }
 
@@ -198,14 +232,16 @@ M = function(settings) {
     self.updateFeatures();
     self.updateLayers();
 
-    var selected = self.selected.getLayers();
+    var selected = self.getSelected();
 
     // if a popup was open, restore it
-    if (selected.length > 0) {
+    if (selected) {
 
-      self.openPopup({}, selected[0]);
+      self.openPopup(selected);
     
-    } 
+    }
+
+    return self;
     
   }
 	
@@ -268,6 +304,8 @@ M = function(settings) {
    
     });
 
+    return self;
+
 	}
 
 	this.updateLayers = function() {
@@ -300,7 +338,7 @@ M = function(settings) {
         linked.forEach(function(link) {
           var label = link.feature.properties.label;
           var label_id = (typeof label === 'string') ? label : label.id; 
-          var label_color = label.color || '#29B';
+          var label_color = label.color || '#btn-info-light';
           if (!rating.hasOwnProperty(label_id)) {
             rating[label_id] = 1;
           } else {
@@ -316,7 +354,7 @@ M = function(settings) {
         properties.rating = rating;
       
       } else if (properties.style) {
-        properties.style.color = '#29B';
+        properties.style.color = '#0078A8'; // brand-primary = 004485, brand-info = 04A1D4, kerrokantasi navbar = #005eb8
       }
 
       if (properties.style) {
@@ -327,12 +365,14 @@ M = function(settings) {
       
     });
 
+    return self;
+
 	}
 	
 	this.updatePopups = function(event) {
 
     // A function for updating popup contents 
-    // kerrokantasi/talvipyöräily specific implementation defined lower
+    // kerrokantasi/talvipyöräily implementation defined lower
 
   }
 	
@@ -342,6 +382,7 @@ M = function(settings) {
     } else {
       delete self.filters[key];
     }
+    return self;
   }
   
   this.getFilter = function(key) {
@@ -349,38 +390,77 @@ M = function(settings) {
   }
 
   this.setCenter = function (latlng, zoom) {
-    var zoom = zoom || 10;
+    var zoom = zoom || 12;
     self.canvas.setView(latlng, zoom);
   }
 
-  this.zoomIn = function() {
-    self.canvas.setZoom(self.canvas.getZoom() + 1);
-  }
+  this.canvas.on('click', function(event) {
+    
+    // Clicking an empty spot will first set the focus on map.
+    // Pressing enter (keyCode == 13) would then close the newly created popup.
+    // Return false to prevent this
+    
+    if (event.originalEvent.keyCode == 13) return false;
 
-  this.zoomOut = function() {
-    self.canvas.setZoom(self.canvas.getZoom() - 1);
-  }
-
-  this.zoomFit = function() {
-    // TO DO: rewrite completely
-    self.setCenter(settings.center);
-  }
-
-	this.canvas.on('click', function(event) {
-		if (self.selected.getLayers().length > 0) {
-      // self.closePopup(); // Leaflet 1 has a bug that causes the canvas to be clicked when a path is clicked
+    var clicked = this.clicked;
+    var now = new Date();
+    
+    if (clicked > now - 50) {
+      
+      // A clicked layer propagated an unnecessary click event to canvas (possibly a Leaflet bug), do nothing
+    
     } else {
-      self.addComment(event);
+
+      // Add a short timeout to distinguish between single and double clicks
+
+      var now = this.clicked = new Date();
+      var buffer = 200;
+
+      // Proceed if there was only one click within the buffer period
+      // Otherwise let the doubleclick event counter all actions
+
+      setTimeout(function() {
+        var clicked = self.canvas.clicked;
+        if (clicked > now - buffer) {
+          if (self.getSelected()) {
+            self.closePopup();
+          } else {
+            self.addComment(event);
+          }
+          self.canvas.clicked = new Date();
+        }
+       }, buffer);
+
     }
-	});
+
+    return this;
+
+  });
+
+  this.canvas.on('dblclick', function(event){
+    // Set clicked timestamp to zero to counter single click evetns
+    self.canvas.clicked = 0;
+  })
 
   this.canvas.on('popupopen', function(event) {
+    // Add a helper class to body for hiding map controls while a popup is open 
+    document.body.classList.add("leaflet-popup-open");
+    // Render popup contents
     self.updatePopups(event);
   });
 
-  if (settings.center) {
-    self.setCenter(settings.center)
-  }
+  this.canvas.on('popupclose', function(event) {
+    // Remove helper class
+    document.body.classList.remove("leaflet-popup-open");
+  });
+
+  // Try to locate user automatically
+  this.canvas.locate({setView: true, maxZoom: 12});
+
+  // If user's location is not found, set map center to settings.center
+  this.canvas.on('locationerror', function(event){
+    if (settings.center) { self.setCenter(settings.center, 9) }
+  });
   
   return this;
 
@@ -388,6 +468,12 @@ M = function(settings) {
 
 
 /// KERROKANTASI TALVIPYÖRÄILY SPECIFIC STUFF
+
+function pad(num, size) {
+  var s = num+"";
+  while (s.length < size) s = "0" + s;
+  return s;
+}
 
 function parseComments(data) {
   
@@ -424,17 +510,36 @@ function parseComments(data) {
       }
     });
 
-    // include style information (line colors) for determining how to display the routes based on their rating
+    // Include style information for determining which colors to use 
     if (feature.properties.hasOwnProperty('label')) {
       var label = feature.properties.label;
       if (label.id == 60) label.color = '#0B5';
-      if (label.id == 61) label.color = '#F44';
+      if (label.id == 61) label.color = '#F69930'; //F44
+      feature.properties.title = (label.label) ? label.label : 'Muu palaute';
+    } else {
+      feature.properties.title = 'Muu palaute';
     }
 
-    if (feature.properties.hasOwnProperty('linked_id') && typeof feature.properties.linked_id === 'string')
-      feature.properties.linked_id = [feature.properties.linked_id];
+    // Preformat property values for Handlebar templates
+    feature.properties.n_votes = (feature.properties.hasOwnProperty('n_votes')) ? feature.properties.n_votes : 0;
+    feature.properties.author_name = (feature.properties.hasOwnProperty('author_name')) ? feature.properties.author_name : 'Anonyymi';
+    feature.properties.content = (feature.properties.hasOwnProperty('content')) ? '<p>' + feature.properties.content + '</p>': '';
+    
+    if (feature.properties.hasOwnProperty('created_at')) {
+      feature.properties.date_object = new Date(feature.properties.created_at); 
+      feature.properties.date_string = pad(feature.properties.date_object.getDate(), 2) + '.' + pad(1 + feature.properties.date_object.getMonth(), 2) + '.' + feature.properties.date_object.getFullYear() + ' ' + pad(feature.properties.date_object.getHours(), 2) + ':' + pad(feature.properties.date_object.getMinutes(), 2) + ':' + pad(feature.properties.date_object.getSeconds(), 2);
+    }
 
-    feature.properties.template = 'popup-view-comment';
+    if (feature.properties.hasOwnProperty('images') && feature.properties.images.length > 0) {
+      feature.properties.image = feature.properties.images[0];
+    }
+
+    if (feature.properties.hasOwnProperty('linked_id') && typeof feature.properties.linked_id === 'string'){
+      feature.properties.linked_id = [feature.properties.linked_id];
+    }
+
+    feature.properties.template = 'template-view-comment';
+    
     featurecollection.features.push(feature);
   
   });
@@ -454,12 +559,14 @@ function parseRoutes(data) {
         feature.properties = {};
       feature.properties.permanent = true;
       feature.properties.style = {
-        color: '#29B', //'#0B5',
+        color: '#0078A8', // brand-primary = 004485, brand-info = 04A1D4, kerrokantasi navbar = #005eb8
         lineCap: 'round',
-        opacity: .75,
+        opacity: .5,
         weight: 10
       }
-      feature.properties.template = 'popup-view-comments';
+      feature.properties.title = feature.properties.name;
+      feature.properties.content = '<p>' + feature.properties.winter_mai + ' (' + feature.properties.winter_mai_1 + ')</p>';
+      feature.properties.template = 'template-view-rating';
     });
 
   }
@@ -488,7 +595,7 @@ function prepareComment(data) {
   }
 
   if (data.hasOwnProperty('selected')) {
-    var selected = data.selected[0];
+    var selected = data.selected;
     if (selected.hasOwnProperty('feature') && selected.feature.hasOwnProperty('properties') && selected.feature.properties.hasOwnProperty('id')) {
       comment.geojson.properties.linked_id = selected.feature.properties.id;
     }
@@ -512,7 +619,8 @@ function prepareComment(data) {
     comment.label = parseInt(data.label);
   }
 
-  // TEMP for generating test data
+  /*
+  // TEMP stuff for generating test data with kerrokantasi syntax
   if (comment.label)
     comment.label = { id : comment.label, label : comment.title };
   
@@ -521,13 +629,14 @@ function prepareComment(data) {
   comment.id = now.getTime();
   console.log(JSON.stringify(comment));
 
-  // TEMP restore fields
+  // TEMP restore fields before submitting to api
 
   delete comment.created_at;
   delete comment.id;
 
   if (comment.label && comment.label.hasOwnProperty('id'))
     comment.label = comment.label.id ;
+  */
 
   return { comment : comment };
   
@@ -540,7 +649,7 @@ function prepareVote(data) {
   var vote = {};
 
   if (data.hasOwnProperty('selected')) {
-    var selected = data.selected[0];
+    var selected = data.selected;
     if (selected.hasOwnProperty('feature') && selected.feature.hasOwnProperty('properties') && selected.feature.properties.hasOwnProperty('id')) {
       return { commentId : selected.feature.properties.id };
     }
@@ -555,54 +664,30 @@ function updateFiltering() {
   // Update map filtering when user changes the sidebar inputs
 
   var start = new Date();
-  start.setDate(start.getDate() - 1);
   var end = new Date();
 
-  if (!$('#filter-start-date').val()) {
-    $('#filter-start-date').datepicker('setDate', start);
+  start.setDate(start.getDate() - 1);
+
+  if (!$('#filter-date-start').val()) {
+    $('#filter-date-start').datepicker('setDate', start);
   }
 
-  if (!$('#filter-end-date').val()) {
-    $('#filter-end-date').datepicker('setDate', end);
+  if (!$('#filter-date-end').val()) {
+    $('#filter-date-end').datepicker('setDates', end);
   }
+	
+	var startDate = $('#filter-date-start').datepicker('getDate');
+	var endDate = $('#filter-date-end').datepicker('getDate');
+	
+	var startUTC = startDate.setHours(0, 0, 0);
+	var endUTC = endDate.setHours(23, 59, 59);
 
-  /*
-  if (!$('#filter-start-time').val()) {
-    $('#filter-start-time').val(start.getHours() + ':' + start.getMinutes());
-  }
-  
-  if (!$('#filter-end-time').val()) {
-    $('#filter-emd-time').val(end.getHours() + ':' + end.getMinutes());
-  }
-  */
-	
-	var startDay = $('#filter-start-date').datepicker('getDate');
-	//var startTime = $('#filter-start-time').val().split(':');
-	
-	var endDay = $('#filter-end-date').datepicker('getDate');
-	//var endTime = $('#filter-end-time').val().split(':');
-	
-	var startUTC = startDay.setHours(0, 0, 0);
-	var endUTC = endDay.setHours(23, 59, 59);
-
-	var dateStart = new Date(startUTC);
-	var dateEnd = new Date(endUTC);
-
-	if (dateStart > dateEnd) {
-		
-		//$('#filter-end-date').datepicker('setUTCDate', dateStart);
-		//$('#filter-end-time').timepicker('setTime', startDate.getHours() + ':' + startDate.getMinutes());
-	
-  }
+  map.setFilter('dateStart', new Date(startUTC));
+  map.setFilter('dateEnd', new Date(endUTC));
 
   var label = $.map($('.js-filter-label:checked'), function(d) { return $(d).data('label'); });
 
   map.setFilter('label', label);
-
-	map.setFilter('dateStart', dateStart);
-	map.setFilter('dateEnd', dateEnd);
-
-  map.update();
 
 }
 
@@ -631,7 +716,7 @@ function EPSG3067() {
   return new L.Proj.CRS(crsName, projDef, crsOpts);
 }
 
-// INIT
+// Init leaflet
 
 var instanceId = null;
 
@@ -642,7 +727,6 @@ var worldLatLngs = [L.latLng(worldNorthEast.lat, worldNorthEast.lng), L.latLng(w
 var worldOrigo = L.latLng((worldNorthEast.lat - worldSouthWest.lat) / 2, (worldNorthEast.lng - worldSouthWest.lng) / 2);
 
 var tilelayer = L.tileLayer('http://geoserver.hel.fi/mapproxy/wmts/osm-sm/etrs_tm35fin/{z}/{x}/{y}.png');
-//var tilelayer = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/dark-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwZG9uIiwiYSI6ImNpczZncHk5ajAwMjUyeXNkc3p1dTU2NjIifQ.N54dNdAT73_MD-mrdehlKQ');
 
 var map = new M({
   center: [60.1708, 24.9375],
@@ -654,23 +738,24 @@ var map = new M({
 
 map.updatePopups = function(event) {
 
-  // Function for populating popups for kerrokantasi/talvipyöräily
+  // Function for populating popups in kerrokantasi/talvipyöräily
 
-  var selected = map.selected.getLayers();
-  var $popup = $('.leaflet-popup-content');
+  var selected = map.getSelected();
 
-  // TEMP reset label counts
-  $('[data-view="label-count"]').html('');
+  if (!selected) return false;
 
-  if (selected.length > 0) {
+  var popup = selected.getPopup();
+  var properties = selected.feature.properties;
 
-    var properties = selected[0].feature.properties;
-    var rating = properties.rating || {};
-    var title = properties.name || properties.title;
-    var content = properties.content || '';
-    var label = properties.label;
-
+  if (properties.hasOwnProperty('rating')) {
+    properties.rating_60 = (properties.rating['60']) ? properties.rating['60'] : 0;
+    properties.rating_61 = (properties.rating['61']) ? properties.rating['61'] : 0;
   }
+
+  var template = Handlebars.compile($(document.getElementById(properties.template)).html());
+  var html = template(properties);
+  
+  popup.setContent(html);
 
   if (event) {
 
@@ -678,79 +763,32 @@ map.updatePopups = function(event) {
 
   }
 
-  if (rating) {
+  // define generic popup interactions
 
-    $.each(rating, function(label, count) {
-      $('[data-view="label-count"][data-label="' + label + '"]').html(count);
-    })
+  var $popup = $(popup.getElement());
 
-  }
-
-  if (title) {
-
-    $('[data-view="title"]').html(title);  
-
-  } 
-
-  if (label) {
-
-    $('[data-view="label-title"]').html(label.label);  
-
-  } 
-
-  if (content) {
-
-    $('[data-view="comment-content"]').html(content);  
-
-  } 
-  
-  var $form = $popup.find('form');
-  var $imageInput = $popup.find('[type="file"].image-input');
-  var $imagePreview = $popup.find('[for="' + $imageInput.attr('id') + '"].image-preview');  
-  var imageUploader = new CanvasImageUploader({ maxSize: 800, jpegQuality: 0.7 });
-
-  $imageInput.bind('change', function onImageChanged(e) {
-    var files = e.target.files || e.dataTransfer.files;
-    if (files) {
-      imageUploader.readImageToCanvas(files[0], $imagePreview, function () {
-        imageUploader.saveCanvasToImageData($imagePreview[0]);
-        $imagePreview.css('width', '100%');
-      });
-    }
-  });
-
-  $popup.on('click', '[data-action="new-comment"]', function(e) {
+  $popup.on('click', '[data-action="add-comment"]', function(e) {
     e.preventDefault();
-    var bubbled = event; bubbled.latlng = latlng;
-    map.addComment(bubbled);
+    map.addComment();
   });
 
-  $popup.on('click', '[data-action="submit-comment"]', function(e) {
-    e.preventDefault();
-    var data = {};
-    data.content = $form.find('[name="content"]').val();
-    data.label = $form.find('[name="label"]').val();
-    if ($imagePreview && $imagePreview.attr('width') && $imagePreview.attr('height'))
-      data.imageUrl = $imagePreview[0].toDataURL();
-    data.latlng = latlng;
-    data.selected = selected;
-    messageParent('userData', prepareComment(data));
-    map.closePopup();
-  });
-
+  // rating = comment with a label that provides a positive or negative vote
   $popup.on('click', '[data-action="submit-rating"]', function(e) {
     e.preventDefault();
     var data = $(this).data(); 
     data.latlng = latlng;
     data.selected = selected;
     messageParent('userData', prepareComment(data));
+    map.closePopup();
   });
 
+  // vote = real kerrokantasi vote, a plain number without any quality
   $popup.on('click', '[data-action="submit-vote"]', function(e) {
     e.preventDefault();
     var data = {}
     data.selected = selected;
     messageParent('userVote', prepareVote(data));
+    map.closePopup();
   });
 
   $popup.on('click', '[data-dismiss="popup"]', function(e) {
@@ -758,44 +796,120 @@ map.updatePopups = function(event) {
     map.closePopup();
   });
 
-  $popup.on('submit', 'form', function(e) {
+  // define comment form specific interactions 
+  
+  var $form = $popup.find('#form-add-comment');
+    
+  var $imageFile = $form.find('#form-add-comment-image-file');
+  var $imageCaption = $form.find('#form-add-comment-image-caption');
+  var $imagePreview = $form.find('#form-add-comment-image-preview');  
+  
+  var $commentContent = $form.find('#form-add-comment-content');
+  var $commentLabel = $form.find('#form-add-comment-label');
+
+  var $formCancel = $form.find('#form-add-comment-cancel');
+  var $formSubmit = $form.find('#form-add-comment-submit');
+
+  var imageUploader = new CanvasImageUploader({ maxSize: 800, jpegQuality: 0.7 });
+
+  $imageFile.on('change', function (e) {
+    var files = e.target.files || e.dataTransfer.files;
+    if (files) {
+      $imageCaption.removeClass('hide');
+      imageUploader.readImageToCanvas(files[0], $imagePreview, function () {
+        imageUploader.saveCanvasToImageData($imagePreview[0]);
+        $imagePreview.css('width', '100%');
+        $imageCaption.focus();
+      });
+    } else {
+      $imageCaption.addClass('hide');
+    }
+  });
+
+  $formSubmit.on('click', function(e) {
+    e.preventDefault();
+    var data = {};
+    data.content = $commentContent.val();
+    data.label = $commentLabel.val();
+    if ($imagePreview && $imagePreview.attr('width') && $imagePreview.attr('height')) {
+      data.imageUrl = $imagePreview[0].toDataURL();
+      data.imageCaption = $imageCaption.val();
+    }
+    data.latlng = latlng;
+    data.selected = selected;
+    messageParent('userData', prepareComment(data));
+    map.closePopup();
+  });
+
+  $form.on('change input', 'input, select, textarea', function(e) {
+    // a simple validation for now... user must select a before the submit button becomes active 
+    $formSubmit.prop('disabled', !$commentLabel.val());
+  });
+
+  $form.on('submit', function(e) {
     e.preventDefault();
   });
 
-  $popup.on('reset', 'form', function(e) {
+  $form.on('reset', function(e) {
     e.preventDefault();
   });
 
 }
 
+// Define sidebar jquery elements and interactions
+
 $(function() {
   
-  $('.js-datepicker').datepicker({
+  $('.js-daterange').datepicker({
     autoclose: true,
     format: "dd.mm.yyyy",
     language: "fi",
-    maxViewMode: 2,
+    maxViewMode: 0,
+    templates: {
+        leftArrow: '<i class="fa fa-angle-left"></i>',
+        rightArrow: '<i class="fa fa-angle-right"></i>'
+    },
     todayHighlight: true
   });
-  
-  $('.js-filter').on('change', function() {
+
+  $('.js-filter-date').on('mousedown focus', function(e) {
+    e.preventDefault();
+    $(this).blur();
+    $(this).datepicker('show');
+  });
+
+  $('.js-filter-date').on('blur', function(e) {
+    $('.js-filter-date').datepicker('hide');
+  });
+
+  $('.js-filter-label').on('focus', function(e) {
+    $('.js-filter-date').datepicker('hide');
+  });
+
+  $('.js-filter').on('change input', function() {
     updateFiltering();
     map.update();
   });
 
-  $('[data-action="zoom-in"]').on('click', map.zoomIn);
-  $('[data-action="zoom-out"]').on('click', map.zoomOut);
-  $('[data-action="zoom-fit"]').on('click', map.zoomFit);
+  $('[data-toggle="tab"]').on('click', function(e){
+    $(window).trigger('resize');
+  })
+
+  $(document).on("keypress", ":input:not(textarea)", function(event) {
+    return event.keyCode != 13;
+  });
+  
+  updateFiltering();
 
 });
+
+// Subscribe to iframe postmessages
 
 window.addEventListener('message', function(message) {    
  
   if (message.data.message == 'mapData' && message.data.instanceId) {
     
     instanceId = message.data.instanceId;
-
-    updateFiltering();
 
     var commentdata = JSON.parse(message.data.comments);
     var mapdata = JSON.parse(message.data.data);
@@ -809,7 +923,3 @@ window.addEventListener('message', function(message) {
   }
 
 });
-
-
-
-

@@ -36,6 +36,7 @@
 			line-height: 20px;
 			text-align: center;
 			vertical-align: middle;
+			z-index: 1000;
 		}
 		
 		.plugin-container {
@@ -45,12 +46,10 @@
 			padding-top: 50px;
 			top: 0;
 			left: 0;
+			overflow: hidden;
 		}
 		
 		.plugin {
-			position: relative;
-			width: 100%;
-			height: 100%;
 			border: none;
 		}
 		
@@ -63,7 +62,7 @@
 <div class="navbar">(Kerrokantasi-navbar)</div>
 
 <div class="plugin-container">
-	<iframe src="plugin-inline.html" class="plugin" id="plugin"></iframe>
+	<iframe src="plugin-inline.html" class="plugin" id="plugin" width="100%" height="100%"></iframe>
 </div>
 
 <script type="text/javascript" src="data/mapdata.js"></script>

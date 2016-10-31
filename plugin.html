@@ -8,194 +8,167 @@
 
 	<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 	<link href="css/bootstrap-datepicker3.css" rel="stylesheet" type="text/css" />
-	
 	<link href="css/leaflet.css" rel="stylesheet" type="text/css" />
-
-	<link href="fontello.css" rel="stylesheet" type="text/css" />
+	
+	<link href="font-awesome.css" rel="stylesheet" type="text/css" />
 	<link href="style.css" rel="stylesheet" type="text/css" />
 	
-	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700,400italic" rel="stylesheet" type="text/css" />
-
 </head>
 
 <body>
 
 	<div class="tab-content">
 
-		<div class="tab-pane tab-pane-main tab-pane-map" id="tab-pane-map">
+		<div class="tab-pane tab-pane-side tab-pane-filtering" id="tab-pane-filtering">
+			
+			<a href="#tab-pane-map" class="close" aria-controls="tab-pane-map" role="tab" data-toggle="tab">&times;</a>
 
-			<div class="tab-controls tab-controls-top-right">
-				<a href="#tab-pane-filtering" class="btn btn-primary btn-lg" aria-controls="tab-pane-filtering" role="tab" data-toggle="tab">Suodata</a>
+			<h2 class="h3 pane-title">Suodata</h2>
+
+			<form action="#" method="post">
+			
+				<div class="form-group">
+				
+					<h3 class="h4 form-group-title"><i class="fa fa-calendar"></i> Näytettävä aikaväli</h3>
+
+					<div class="input-group input-daterange js-daterange" id="filter-date">
+						<input type="text" class="form-control js-filter js-filter-date js-filter-date-start" name="start" id="filter-date-start" />
+						<span class="input-group-addon">&ndash;</span>
+						<input type="text" class="form-control js-filter js-filter-date js-filter-date-end" name="end" id="filter-date-end" />
+					</div>
+
+				</div>
+				
+				<div class="form-group">
+				
+					<h3 class="h4 form-group-title"><i class="fa fa-tags"></i> Näytettävät aiheet</h3>
+
+					<div class="checkbox checkbox-grid">
+						<label><input type="checkbox" class="js-filter js-filter-label" data-label="60" checked="checked" />Väylä kunnossa</label>
+					</div>
+					<div class="checkbox checkbox-grid">
+						<label><input type="checkbox" class="js-filter js-filter-label" data-label="61" checked="checked" />Väylä hoitamatta</label>
+					</div>
+					<div class="checkbox checkbox-grid">
+						<label><input type="checkbox" class="js-filter js-filter-label" data-label="62" checked="checked" />Liikaa lunta</label>
+					</div>
+					<div class="checkbox checkbox-grid">
+						<label><input type="checkbox" class="js-filter js-filter-label" data-label="63" checked="checked" />Liikaa sohjoa</label>
+					</div>
+					<div class="checkbox checkbox-grid">
+						<label><input type="checkbox" class="js-filter js-filter-label" data-label="64" checked="checked" />Jäätä/polanne</label>
+					</div>
+					<div class="checkbox checkbox-grid">
+						<label><input type="checkbox" class="js-filter js-filter-label" data-label="65" checked="checked" />Jäisiä uria</label>
+					</div>
+					<div class="checkbox checkbox-grid">
+						<label><input type="checkbox" class="js-filter js-filter-label" data-label="66" checked="checked" />Lumivalleja</label>
+					</div>
+					<div class="checkbox checkbox-grid">
+						<label><input type="checkbox" class="js-filter js-filter-label" data-label="67" checked="checked" />Hiekkaa</label>
+					</div>
+					<div class="checkbox checkbox-grid">
+						<label><input type="checkbox" class="js-filter js-filter-label" data-label="68" checked="checked" />Vesilätäköitä</label>
+					</div>
+					<div class="checkbox checkbox-grid">
+						<label><input type="checkbox" class="js-filter js-filter-label" data-label="69" checked="checked" />Muu palaute</label>
+					</div>
+
+				</div>
+
+				<div class="visible-xs">
+				
+					<br />
+
+					<a href="#tab-pane-map" class="btn btn-success btn-lg btn-block" aria-controls="tab-pane-map" role="tab" data-toggle="tab">Valmis</a>
+
+				</div>
+
+			</form>
+
+		</div>
+
+		<div class="tab-pane tab-pane-main tab-pane-map active" id="tab-pane-map">
+
+			<div class="tab-controls">
+				<div class="leaflet-control-container">
+					<div class="leaflet-top leaflet-right">
+						<div class="leaflet-bar leaflet-control leaflet-control-filtering">
+							<a class="leaflet-control-button leaflet-control-button-filtering" href="#tab-pane-filtering" aria-controls="tab-pane-filtering" role="tab" data-toggle="tab">
+								<i class="fa fa-sliders"></i> Suodata
+							</a>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div class="map-canvas" id="map-canvas"></div>
 
-			<div class="map-controls map-controls-bottom-left" id="map-controls">
-				<button type="button" class="btn btn-primary btn-circle" tabindex="-1" data-action="zoom-fit"><span class="icon icon-resize-small"></span></button>
-				<button type="button" class="btn btn-primary btn-circle" tabindex="-1" data-action="zoom-in"><span class="icon icon-plus"></span></button>
-				<button type="button" class="btn btn-primary btn-circle" tabindex="-1" data-action="zoom-out"><span class="icon icon-minus"></span></button>
-			</div>
-
-		</div>
-
-		<div class="tab-pane tab-pane-side tab-pane-filtering active" id="tab-pane-filtering">
-
-			<div class="tab-controls tab-controls-top-right">
-				<a href="#tab-pane-map" class="btn btn-default btn-lg" aria-controls="tab-pane-map" role="tab" data-toggle="tab">Sulje</a>
-			</div>
-
-			<div class="container-fluid">
-
-				<h2 class="h4">Suodata</h2>
-
-				<form action="#">
-
-					<legend>Näytettävä aikaväli</legend>
-
-					<div class="form-group">
-
-						<div class="row">
-
-							<div class="col-xs-6">
-								<label for="">Alkaen</label>
-								<input type="text" class="form-control js-datepicker js-filter js-filter-start-date" id="filter-start-date" value="" />
-							</div>
-
-							<div class="col-xs-6">
-								<label for="">Päättyen</label>
-								<input type="text" class="form-control js-datepicker js-filter js-filter-end-date" id="filter-end-date" value="" />
-							</div>
-
-							<!--
-							<div class="col-xs-4">
-								<label for="">&nbsp;</label>
-								<input type="text" class="form-control js-timepicker js-filter js-filter-end-time" id="filter-end-time" value="" />
-							</div>
-							<div class="col-xs-4">
-								<label for="">&nbsp;</label>
-								<input type="text" class="form-control js-timepicker js-filter js-filter-start-time" id="filter-start-time" value="" />
-							</div>
-							-->
-
-						</div>
-
-					</div>
-
-					<legend>Näytettävät kategoriat</legend>
-
-					<div class="form-group">
-
-						<div class="checkbox">
-							<label><input type="checkbox" class="js-filter js-filter-label" data-label="60" checked="checked" />Väylä kunnossa</label>
-						</div>
-
-						<div class="checkbox">
-							<label><input type="checkbox" class="js-filter js-filter-label" data-label="61" checked="checked" />Väylä hoitamatta</label>
-						</div>
-
-						<div class="checkbox">
-							<label><input type="checkbox" class="js-filter js-filter-label" data-label="62" checked="checked" />Liikaa lunta</label>
-						</div>
-						
-						<div class="checkbox">
-							<label><input type="checkbox" class="js-filter js-filter-label" data-label="63" checked="checked" />Liikaa sohjoa</label>
-						</div>
-						
-						<div class="checkbox">
-							<label><input type="checkbox" class="js-filter js-filter-label" data-label="64" checked="checked" />Jäätä/polanne</label>
-						</div>
-						
-						<div class="checkbox">
-							<label><input type="checkbox" class="js-filter js-filter-label" data-label="65" checked="checked" />Jäisiä uria</label>
-						</div>
-						
-						<div class="checkbox">
-							<label><input type="checkbox" class="js-filter js-filter-label" data-label="66" checked="checked" />Lumivalleja</label>
-						</div>
-						
-						<div class="checkbox">
-							<label><input type="checkbox" class="js-filter js-filter-label" data-label="67" checked="checked" />Hiekkaa</label>
-						</div>
-						
-						<div class="checkbox">
-							<label><input type="checkbox" class="js-filter js-filter-label" data-label="68" checked="checked" />Vesilätäköitä</label>
-						</div>
-						
-						<div class="checkbox">
-							<label><input type="checkbox" class="js-filter js-filter-label" data-label="69" checked="checked" />Muu palaute</label>
-						</div>
-
-					</div>
-
-					<hr />
-
-					<a href="#tab-pane-map" class="btn btn-success btn-lg visible-xs" aria-controls="tab-pane-map" role="tab" data-toggle="tab">Valmis</a>
-
-				</form>
-
-			</div>
-
 		</div>
 
 	</div>
 
+<script id="template-view-rating" type="text/x-handlebars-template">
 
-	<div class="hidden" id="popup-view-comments">
+		<button class="close" data-dismiss="popup">&times;</button>
 
-		<h1 class="h4" data-view="title"></h1>
-		<div data-view="content"></div>
+		<h2 class="h3 leaflet-popup-title">{{title}}</h2>
 		
-		<hr />
+		{{{content}}}
 
-		<span class="pull-right" data-view="label-count" data-label="60"></span>
-		<a href="#" class="text-success" data-action="submit-rating" data-label="60" data-title="Väylä kunnossa"><strong>Väylä kunnossa</strong></a>
+		<button class="btn btn-vote btn-block btn-success" data-action="submit-rating" data-label="60" data-title="Väylä kunnossa">
+			<span class="btn-meta pull-right"><i class="fa fa-thumbs-o-up"></i> {{rating_60}}</span>
+			Väylä kunnossa
+		</button>
 
-		<hr />
+		<button class="btn btn-vote btn-block btn-warning" data-action="submit-rating" data-label="61" data-title="Väylä hoitamatta">
+			<span class="btn-meta pull-right"><i class="fa fa-thumbs-o-down"></i> {{rating_61}}</span>
+			Väylä hoitamatta
+		</button>
 
-		<span class="pull-right" data-view="label-count" data-label="61"></span>
-		<a href="#" class="text-danger" data-action="submit-rating" data-label="61" data-title="Väylä hoitamatta"><strong>Väylä hoitamatta</strong></a>
+		<button class="btn btn-vote btn-block btn-info" data-action="add-comment">
+			<span class="btn-meta pull-right"><i class="fa fa-map-marker"></i></span>
+			Lisää muu merkintä
+		</button>
 
-		<hr />
+	</script>
 
-		<a href="#" class="" data-action="new-comment"><strong>Lisää tähän muu merkintä</strong></a>
+	<script id="template-view-comment" type="text/x-handlebars-template">
 
-		<hr />
+		<button class="close" data-dismiss="popup">&times;</button>
 
-		<p class="text-right"><a href="#" class="btn btn-default" data-dismiss="popup">Sulje</a></p>
+		<h2 class="h3 leaflet-popup-title">{{title}}</h2>
 
-	</div>
+		{{#if image}}
 
-	<div class="hidden" id="popup-view-comment">
+		<img src="{{image.url}}" width="{{image.width}}" height="{{image.height}}" class="img-responsive" />
 
-		<span class="pull-right">
-			<a href="#" data-action="submit-vote">^^^</a>
-			<span data-view="vote-count"></span>
-		</span>
+		{{/if}}
 
-		<p><strong data-view="comment-author"></strong> · <span data-view="comment-date"></span></p>
-
-		<hr />
-
-		<p><img src="http://placehold.it/480x360" class="img-responsive" /></p>
-
-		<div data-view="comment-content"></div>
-		<p><span class="label label-danger" data-view="label-title"></span></p>
+		{{{content}}}
 
 		<hr />
 
-		<p class="text-right"><a href="#" class="btn btn-default" data-dismiss="popup">Sulje</a></p>
+		<button class="btn btn-info pull-right" data-action="submit-vote"><span class="btn-meta"><i class="fa fa-thumbs-o-up"></i> {{n_votes}}</span></button>
 
-	</div>
+		<ul class="comment-details">
+			{{#if author_name}}<li><strong>{{author_name}}</strong></li>{{/if}}
+			{{#if date_string}}<li>{{date_string}}</li>{{/if}}
+		</ul>
 
-	<div class="hidden" id="popup-add-comment">
+	</script>
 
-		<h1 class="h4">Lisää merkintä kartalle</h1>
+	<script id="template-add-comment" type="text/x-handlebars-template">
 
-		<form>
+		<button class="close" data-dismiss="popup">&times;</button>
+
+		<h2 class="h3 leaflet-popup-title">Lisää merkintä</h2>
+
+		<form id="form-add-comment" action="#" method="post">
 
 			<div class="form-group">
-				<label>Kategoria*</label>
-				<select class="form-control" name="label">
+				<label for="form-add-comment-label">Aihe*</label>
+				<select class="form-control" name="label" id="form-add-comment-label" tabindex="1" required>
 					<option value="">Valitse</option>
 					<option value="62">Liikaa lunta</option>
 					<option value="63">Liikaa sohjoa</option>
@@ -209,40 +182,44 @@
 			</div>
 
 			<div class="form-group">
-				<label>Lisätiedot</label>
-				<textarea class="form-control input-sm" placeholder="Lisää tarvittaessa tarkempi kuvaus" name="content"></textarea>
+				<label for="form-add-comment-content">Kuvaus</label>
+				<textarea class="form-control input-sm" id="form-add-comment-content" rows="2" tabindex="2" placeholder="Lisää tarvittaessa tarkempi kuvaus" name="content"></textarea>
 			</div>
 
 			<div class="form-group">
-				<label >Kuva</label>
-				<canvas class="image-preview" id="image-preview" for="image-input"></canvas>
-				<input type="file" class="form-control image-input" name="image" id="image-input" />		
+				<label for="form-add-comment-image-input">Kuva</label>
+				<canvas class="image-preview" id="form-add-comment-image-preview"></canvas>
+				<input type="file" class="image-input form-control input-sm" name="image" id="form-add-comment-image-file" tabindex="3" accept="image/*" />
+				<input type="text" class="image-caption form-control input-sm hide" name="caption" tabindex="4" id="form-add-comment-image-caption" placeholder="Kuvaajan nimi" />
 			</div>
 
-			<hr />
-
-			<p class="text-right">
-				<button class="btn btn-default" type="reset" data-dismiss="popup">Peruuta</button>
-				<button class="btn btn-success" type="submit" data-action="submit-comment">Tallenna</button>
-			</p>
+			<div class="text-right">
+				<button class="btn btn-default" type="reset" id="form-add-comment-cancel" tabindex="5" data-dismiss="popup"><i class="fa fa-remove"></i> Peruuta</button>
+				<button class="btn btn-success" type="submit" id="form-add-comment-submit" tabindex="6" data-action="submit-comment" disabled><i class="fa fa-check"></i> Lähetä</button>
+			</div>
 
 		</form>
 
-	</div>
+	</script>
 
 	<script src="js/vendor/handlebars-4.0.5.js"></script>
 	
 	<script src="js/vendor/jquery-2.2.4.js"></script>
-	<script src="js/vendor/jquery.bootstrap.js"></script>
-
+	
+	<script src="js/vendor/bootstrap.js"></script>
 	<script src="js/vendor/bootstrap-datepicker.js"></script>
+	
+	<script>
+		!function(a){a.fn.datepicker.dates.fi={days:["sunnuntai","maanantai","tiistai","keskiviikko","torstai","perjantai","lauantai"],daysShort:["sun","maa","tii","kes","tor","per","lau"],daysMin:["su","ma","ti","ke","to","pe","la"],months:["tammikuu","helmikuu","maaliskuu","huhtikuu","toukokuu","kesäkuu","heinäkuu","elokuu","syyskuu","lokakuu","marraskuu","joulukuu"],monthsShort:["tam","hel","maa","huh","tou","kes","hei","elo","syy","lok","mar","jou"],today:"tänään",clear:"Tyhjennä",weekStart:1,format:"d.m.yyyy"}}(jQuery);
+	</script>
+	
+	
 	<script src="js/vendor/leaflet.js"></script>
+	<script src="js/vendor/proj4.js"></script>
+	<script src="js/vendor/proj4leaflet.js"></script>
 
 	<script src="js/vendor/exif.js"></script>
 	<script src="js/vendor/canvas-image-uploader.js"></script>
-
-	<script src="js/vendor/proj4.js"></script>
-	<script src="js/vendor/proj4leaflet.js"></script>
 
 	<script src="js/m.js"></script>
 

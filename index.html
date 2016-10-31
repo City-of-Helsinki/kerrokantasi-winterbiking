@@ -89,7 +89,7 @@ function sendMapData(message) {
 var postmessage = MAPDATA;
 
 	postmessage.data = JSON.stringify(MAPDATA.data);
-	postmessage.comments = JSON.stringify(MAPDATA.comments);
+	postmessage.comments = MAPDATA.comments;
 
 setTimeout(function() {
 
@@ -111,7 +111,7 @@ setTimeout(function() {
 	}
 
 	response.data = JSON.stringify(response.data);
-	response.comments = JSON.stringify(response.comments);
+	response.comments = response.comments;
 
 	sendMapData(response);
 

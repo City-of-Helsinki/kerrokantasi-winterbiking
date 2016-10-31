@@ -911,14 +911,15 @@ window.addEventListener('message', function(message) {
     
     instanceId = message.data.instanceId;
 
-    var commentdata = JSON.parse(message.data.comments);
-    var mapdata = JSON.parse(message.data.data);
+    if (message.data.hasOwnProperty('comments') && message.data.comments.length > 0) {
+      map.addGeoJSON(parseComments(message.data.comments));
+    }
 
-    if (mapdata.hasOwnProperty('existing'))
-      map.addGeoJSON(parseRoutes(mapdata.existing));
-
-    if (commentdata.length > 0)
-      map.addGeoJSON(parseComments(commentdata));
+    if (message.data.hasOwnProperty('data')) {
+      var mapdata = JSON.parse(message.data.data);
+      if (mapdata.hasOwnProperty('existing'))
+        map.addGeoJSON(parseRoutes(mapdata.existing));
+    }
 
   }
 

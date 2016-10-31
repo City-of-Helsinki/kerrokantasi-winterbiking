@@ -616,27 +616,8 @@ function prepareComment(data) {
   }
 
   if (data.hasOwnProperty('label')) {
-    comment.label = parseInt(data.label);
+    comment.label = { id : parseInt(data.label) };
   }
-
-  /*
-  // TEMP stuff for generating test data with kerrokantasi syntax
-  if (comment.label)
-    comment.label = { id : comment.label, label : comment.title };
-  
-  var now = new Date();
-  comment.created_at = now.toISOString();
-  comment.id = now.getTime();
-  console.log(JSON.stringify(comment));
-
-  // TEMP restore fields before submitting to api
-
-  delete comment.created_at;
-  delete comment.id;
-
-  if (comment.label && comment.label.hasOwnProperty('id'))
-    comment.label = comment.label.id ;
-  */
 
   return { comment : comment };
   

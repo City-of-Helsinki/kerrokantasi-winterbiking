@@ -544,8 +544,6 @@ function parseComments(data) {
   
   });
 
-  console.log(featurecollection);
-
   return featurecollection;
 
 }

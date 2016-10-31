@@ -93,6 +93,8 @@ var postmessage = MAPDATA;
 
 setTimeout(function() {
 
+	console.log(postmessage);
+
 	sendMapData(postmessage);
 
 }, 2000);
@@ -105,13 +107,15 @@ setTimeout(function() {
 	 	"pluginPurpose": "postComments",
 	 	"canSetNickname": false,
 	 	"comments": [
-	 		{"id":50,"geojson":{"type":"Feature","properties":{"linked_id":"winter:4-8"},"geometry":{"type":"Point","coordinates":[24.91527557373047,60.172641348219855]}},"title":"Tämä väylä on hoitamatta","label":{"id":102,"label":"Tämä väylä on hoitamatta"},"created_at":"2016-10-27T12:58:11.807Z"}
+	 		{"id":50,"geojson":{"type":"Feature","properties":{"linked_id":"winter:4-8"},"geometry":{"type":"Point","coordinates":[24.91527557373047,60.172641348219855]}},"title":"Tämä väylä on hoitamatta","label":{"id":61,"label":"Tämä väylä on hoitamatta"},"created_at":"2016-10-27T12:58:11.807Z"}
 	 	],
 	 	"data" : {}
 	}
 
 	response.data = JSON.stringify(response.data);
 	response.comments = response.comments;
+
+	console.log(response);
 
 	sendMapData(response);
 

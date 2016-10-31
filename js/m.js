@@ -544,6 +544,8 @@ function parseComments(data) {
   
   });
 
+  console.log(featurecollection);
+
   return featurecollection;
 
 }
@@ -895,7 +897,7 @@ window.addEventListener('message', function(message) {
     
     instanceId = message.data.instanceId;
 
-    if (message.data.hasOwnProperty('comments') && message.data.comments.length > 0) {
+    if (message.data.hasOwnProperty('comments')) {
       map.addGeoJSON(parseComments(message.data.comments));
     }
 

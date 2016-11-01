@@ -51,168 +51,6 @@ label {
 	font-weight: 400;
 }
 
-/*
-.btn-success-light {
-	color: #005d2a;
-}
-
-.btn-danger-light {
-	color: #7f2222;
-} 
-
-.btn-success-light {
-	background-color: #dff0d8;
-}
-
-.btn-danger-light {
-	background-color: #f2dede;
-}
-
-.btn-info-light {
-	background-color: #d9edf7;
-}
-*/
-
-/*
-.btn-success-light { 
-  color: #006930; 
-  background-color: #EFFBF4; 
-  border-color: #EFFBF4; 
-} 
- 
-.btn-success-light:hover, 
-.btn-success-light:focus, 
-.btn-success-light:active, 
-.btn-success-light.active, 
-.open .dropdown-toggle.btn-success-light { 
-  color: #006930; 
-  background-color: #bfeed4; 
-  border-color: #EFFBF4; 
-} 
- 
-.btn-success-light:active, 
-.btn-success-light.active, 
-.open .dropdown-toggle.btn-success-light { 
-  background-image: none; 
-} 
- 
-.btn-success-light.disabled, 
-.btn-success-light[disabled], 
-fieldset[disabled] .btn-success-light, 
-.btn-success-light.disabled:hover, 
-.btn-success-light[disabled]:hover, 
-fieldset[disabled] .btn-success-light:hover, 
-.btn-success-light.disabled:focus, 
-.btn-success-light[disabled]:focus, 
-fieldset[disabled] .btn-success-light:focus, 
-.btn-success-light.disabled:active, 
-.btn-success-light[disabled]:active, 
-fieldset[disabled] .btn-success-light:active, 
-.btn-success-light.disabled.active, 
-.btn-success-light[disabled].active, 
-fieldset[disabled] .btn-success-light.active { 
-  background-color: #EFFBF4; 
-  border-color: #EFFBF4; 
-} 
- 
-.btn-success-light .badge { 
-  color: #EFFBF4; 
-  background-color: #006930; 
-}
-
-.btn-danger-light { 
-  color: #8F2626; 
-  background-color: #FFF3F3; 
-  border-color: #FFF3F3; 
-} 
- 
-.btn-danger-light:hover, 
-.btn-danger-light:focus, 
-.btn-danger-light:active, 
-.btn-danger-light.active, 
-.open .dropdown-toggle.btn-danger-light { 
-  color: #8F2626; 
-  background-color: #ffd0d0; 
-  border-color: #FFF3F3; 
-} 
- 
-.btn-danger-light:active, 
-.btn-danger-light.active, 
-.open .dropdown-toggle.btn-danger-light { 
-  background-image: none; 
-} 
- 
-.btn-danger-light.disabled, 
-.btn-danger-light[disabled], 
-fieldset[disabled] .btn-danger-light, 
-.btn-danger-light.disabled:hover, 
-.btn-danger-light[disabled]:hover, 
-fieldset[disabled] .btn-danger-light:hover, 
-.btn-danger-light.disabled:focus, 
-.btn-danger-light[disabled]:focus, 
-fieldset[disabled] .btn-danger-light:focus, 
-.btn-danger-light.disabled:active, 
-.btn-danger-light[disabled]:active, 
-fieldset[disabled] .btn-danger-light:active, 
-.btn-danger-light.disabled.active, 
-.btn-danger-light[disabled].active, 
-fieldset[disabled] .btn-danger-light.active { 
-  background-color: #FFF3F3; 
-  border-color: #FFF3F3; 
-} 
- 
-.btn-danger-light .badge { 
-  color: #FFF3F3; 
-  background-color: #8F2626; 
-}
-
-.btn-info-light { 
-  color: #025B77; 
-  background-color: #EFF9FC; 
-  border-color: #EFF9FC; 
-} 
- 
-.btn-info-light:hover, 
-.btn-info-light:focus, 
-.btn-info-light:active, 
-.btn-info-light.active, 
-.open .dropdown-toggle.btn-info-light { 
-  color: #025B77; 
-  background-color: #c0e7f4; 
-  border-color: #EFF9FC; 
-} 
- 
-.btn-info-light:active, 
-.btn-info-light.active, 
-.open .dropdown-toggle.btn-info-light { 
-  background-image: none; 
-} 
- 
-.btn-info-light.disabled, 
-.btn-info-light[disabled], 
-fieldset[disabled] .btn-info-light, 
-.btn-info-light.disabled:hover, 
-.btn-info-light[disabled]:hover, 
-fieldset[disabled] .btn-info-light:hover, 
-.btn-info-light.disabled:focus, 
-.btn-info-light[disabled]:focus, 
-fieldset[disabled] .btn-info-light:focus, 
-.btn-info-light.disabled:active, 
-.btn-info-light[disabled]:active, 
-fieldset[disabled] .btn-info-light:active, 
-.btn-info-light.disabled.active, 
-.btn-info-light[disabled].active, 
-fieldset[disabled] .btn-info-light.active { 
-  background-color: #EFF9FC; 
-  border-color: #EFF9FC; 
-} 
- 
-.btn-info-light .badge { 
-  color: #EFF9FC; 
-  background-color: #025B77; 
-}
-*/
-
 
 .comment-details {
 	margin: 0;
@@ -231,13 +69,14 @@ fieldset[disabled] .btn-info-light.active {
 	display: block;
 }
 
-/*
-.comment-details > li + li:before {
-    display: inline-block;
-    content: "\2022";
-    margin: 0 .5ex;
+.display-table {
+	display: table;
+	width: 100%;
 }
-*/
+
+.display-table-cell {
+	display: table-cell;
+}
 
 .form-group-title {
 	margin-top: 20px;
@@ -416,6 +255,10 @@ fieldset[disabled] .btn-info-light.active {
 
 .text-danger {
 	color: #a94442 !important;
+}
+
+.vertical-middle {
+	vertical-align: middle;
 }
 
 

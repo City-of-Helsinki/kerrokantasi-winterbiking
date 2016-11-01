@@ -148,12 +148,24 @@
 
 		{{{content}}}
 
-		<button class="btn btn-info pull-right" data-action="submit-vote"><span class="btn-meta"><i class="fa fa-thumbs-o-up"></i> {{n_votes}}</span></button>
+		<div class="display-table">
 
-		<ul class="comment-details">
-			{{#if author_name}}<li><strong>{{author_name}}</strong></li>{{/if}}
-			{{#if date_string}}<li>{{date_string}}</li>{{/if}}
-		</ul>
+			<div class="display-table-cell vertical-middle">
+
+				<ul class="comment-details">
+					{{#if author_name}}<li><strong>{{author_name}}</strong></li>{{/if}}
+					{{#if date_string}}<li>{{date_string}}</li>{{/if}}
+				</ul>
+
+			</div>
+
+			<div class="display-table-cell vertical-middle">
+
+				<button class="btn btn-info pull-right" data-action="submit-vote"><span class="btn-meta"><i class="fa fa-thumbs-o-up"></i> {{n_votes}}</span></button>
+
+			</div>
+
+		</div>
 
 	</script>
 

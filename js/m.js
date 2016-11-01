@@ -612,7 +612,7 @@ function prepareComment(data) {
   }
 
   if (data.hasOwnProperty('imageUrl')) {
-    comment.image = { url : data.imageUrl };
+    comment.image = { image : data.imageUrl };
     if (data.hasOwnProperty('imageCaption'))
       comment.image.caption = data.imageCaption;
   }

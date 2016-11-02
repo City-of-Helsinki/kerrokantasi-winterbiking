@@ -109,7 +109,9 @@
 
 	</div>
 
-<script id="template-view-rating" type="text/x-handlebars-template">
+	<canvas class="image-resizer" id="image-resizer"></canvas>
+
+	<script id="template-view-rating" type="text/x-handlebars-template">
 
 		<button class="close" data-dismiss="popup">&times;</button>
 
@@ -199,7 +201,6 @@
 
 			<div class="form-group">
 				<label for="form-add-comment-image-input">Kuva</label>
-				<canvas class="image-preview" id="form-add-comment-image-preview"></canvas>
 				<input type="file" class="image-input form-control input-sm" name="image" id="form-add-comment-image-file" tabindex="3" accept="image/*" />
 				<input type="text" class="image-caption form-control input-sm hide" name="caption" tabindex="4" id="form-add-comment-image-caption" placeholder="Kuvaajan nimi" />
 			</div>

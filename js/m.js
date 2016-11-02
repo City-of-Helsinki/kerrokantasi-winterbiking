@@ -425,7 +425,7 @@ M = function(settings) {
           if (self.getSelected()) {
             self.closePopup();
           } else {
-            self.addComment(event);
+            // self.addComment(event); // disable adding of new comments outside routes
           }
           self.canvas.clicked = new Date();
         }
@@ -781,12 +781,13 @@ map.updatePopups = function(event) {
   });
 
   // define comment form specific interactions 
-  
+ 
+  var $imageResizer = $('#image-resizer');
+
   var $form = $popup.find('#form-add-comment');
-    
+
   var $imageFile = $form.find('#form-add-comment-image-file');
   var $imageCaption = $form.find('#form-add-comment-image-caption');
-  var $imagePreview = $form.find('#form-add-comment-image-preview');  
   
   var $commentContent = $form.find('#form-add-comment-content');
   var $commentLabel = $form.find('#form-add-comment-label');
@@ -794,15 +795,14 @@ map.updatePopups = function(event) {
   var $formCancel = $form.find('#form-add-comment-cancel');
   var $formSubmit = $form.find('#form-add-comment-submit');
 
-  var imageUploader = new CanvasImageUploader({ maxSize: 800, jpegQuality: 0.7 });
+  var imageUploader = new CanvasImageUploader({ maxSize: 600, jpegQuality: 0.7 });
 
   $imageFile.on('change', function (e) {
     var files = e.target.files || e.dataTransfer.files;
     if (files) {
       $imageCaption.removeClass('hide');
-      imageUploader.readImageToCanvas(files[0], $imagePreview, function () {
-        imageUploader.saveCanvasToImageData($imagePreview[0]);
-        $imagePreview.css('width', '100%');
+      imageUploader.readImageToCanvas(files[0], $imageResizer, function () {
+        imageUploader.saveCanvasToImageData($imageResizer[0]);
         $imageCaption.focus();
       });
     } else {
@@ -815,9 +815,11 @@ map.updatePopups = function(event) {
     var data = {};
     data.content = $commentContent.val() || '';
     data.label = $commentLabel.val();
-    if ($imagePreview && $imagePreview.attr('width') && $imagePreview.attr('height')) {
-      data.imageUrl = $imagePreview[0].toDataURL();
+    if ($imageResizer && $imageResizer.attr('width') && $imageResizer.attr('height')) {
+      data.imageUrl = $imageResizer[0].toDataURL();
       data.imageCaption = $imageCaption.val();
+      $imageResizer.removeAttr('width');
+      $imageResizer.removeAttr('height');
     }
     data.latlng = latlng;
     data.selected = selected;

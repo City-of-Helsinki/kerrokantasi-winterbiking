@@ -89,9 +89,10 @@ label {
 }
 
 
-.image-preview {
-	display: none !important;
-	position: relative !important;
+.image-resizer {
+	position: fixed !important;
+	top: -99999px;
+	left: -99999px;
 }
 
 .image-caption {

@@ -454,6 +454,7 @@ M = function(settings) {
     document.body.classList.remove("leaflet-popup-open");
   });
 
+  /*
   // Try to locate user automatically
   this.canvas.locate({setView: true, maxZoom: 12});
 
@@ -461,6 +462,9 @@ M = function(settings) {
   this.canvas.on('locationerror', function(event){
     if (settings.center) { self.setCenter(settings.center, 9) }
   });
+  */
+
+  if (settings.center) { self.setCenter(settings.center, 9) }
   
   return this;
 

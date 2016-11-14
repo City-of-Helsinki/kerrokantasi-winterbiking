@@ -529,11 +529,6 @@ function parseComments(data) {
     feature.properties.author_name = (feature.properties.hasOwnProperty('author_name')) ? feature.properties.author_name : 'Anonyymi';
     feature.properties.content = (feature.properties.hasOwnProperty('content')) ? '<p>' + feature.properties.content + '</p>': '';
     
-    if (feature.properties.hasOwnProperty('created_at')) {
-      feature.properties.date_object = new Date(feature.properties.created_at); 
-      feature.properties.date_string = pad(feature.properties.date_object.getDate(), 2) + '.' + pad(1 + feature.properties.date_object.getMonth(), 2) + '.' + feature.properties.date_object.getFullYear() + ' ' + pad(feature.properties.date_object.getHours(), 2) + ':' + pad(feature.properties.date_object.getMinutes(), 2) + ':' + pad(feature.properties.date_object.getSeconds(), 2);
-    }
-
     if (feature.properties.hasOwnProperty('images') && feature.properties.images.length > 0) {
       feature.properties.image = feature.properties.images[0];
     }
@@ -541,6 +536,16 @@ function parseComments(data) {
     if (feature.properties.hasOwnProperty('linked_id') && typeof feature.properties.linked_id === 'string'){
       feature.properties.linked_id = [feature.properties.linked_id];
     }
+
+    if (feature.properties.hasOwnProperty('created_at')) {
+      feature.properties.date_object = new Date(feature.properties.created_at); 
+    }
+
+    if (feature.properties.hasOwnProperty('plugin_data') && feature.properties.plugin_data.hasOwnProperty('created_at')) {
+      feature.properties.date_object = new Date(feature.properties.plugin_data.created_at); 
+    }
+    
+    feature.properties.date_string = pad(feature.properties.date_object.getDate(), 2) + '.' + pad(1 + feature.properties.date_object.getMonth(), 2) + '.' + feature.properties.date_object.getFullYear() + ' ' + pad(feature.properties.date_object.getHours(), 2) + ':' + pad(feature.properties.date_object.getMinutes(), 2) + ':' + pad(feature.properties.date_object.getSeconds(), 2);
 
     feature.properties.template = 'template-view-comment';
     
@@ -623,6 +628,13 @@ function prepareComment(data) {
 
   if (data.hasOwnProperty('label')) {
     comment.label = { id : parseInt(data.label) };
+  }
+
+  if (data.hasOwnProperty('date') && data.hasOwnProperty('time')) {
+    var date = data.date;
+    var time = data.time.split(':');
+    var created_at = new Date(date.setHours(parseInt(time[0]), parseInt(time[1]))).toISOString();
+    comment.plugin_data = { created_at : created_at };
   }
 
   return { comment : comment };
@@ -784,6 +796,8 @@ map.updatePopups = function(event) {
     map.closePopup();
   });
 
+
+
   // define comment form specific interactions 
  
   var $imageResizer = $('#image-resizer');
@@ -796,10 +810,34 @@ map.updatePopups = function(event) {
   var $commentContent = $form.find('#form-add-comment-content');
   var $commentLabel = $form.find('#form-add-comment-label');
 
+  var $commentDate = $form.find('#form-add-comment-date');
+  var $commentTime = $form.find('#form-add-comment-time');
+
   var $formCancel = $form.find('#form-add-comment-cancel');
   var $formSubmit = $form.find('#form-add-comment-submit');
 
   var imageUploader = new CanvasImageUploader({ maxSize: 600, jpegQuality: 0.7 });
+
+  var now = new Date();
+
+  $commentDate.datepicker({
+    autoclose: true,
+    format: "dd.mm.yyyy",
+    language: "fi",
+    maxViewMode: 0,
+    templates: {
+        leftArrow: '<i class="fa fa-angle-left"></i>',
+        rightArrow: '<i class="fa fa-angle-right"></i>'
+    },
+    todayHighlight: true
+  });
+
+  $commentDate.datepicker('setDate', now);
+
+  $commentTime.timepicker({
+    minuteStep: 5,
+    showMeridian: false
+  });
 
   $imageFile.on('change', function (e) {
     var files = e.target.files || e.dataTransfer.files;
@@ -825,6 +863,8 @@ map.updatePopups = function(event) {
       $imageResizer.removeAttr('width');
       $imageResizer.removeAttr('height');
     }
+    data.date = $commentDate.datepicker('getDate');
+    data.time = $commentTime.val();
     data.latlng = latlng;
     data.selected = selected;
     messageParent('userData', prepareComment(data));

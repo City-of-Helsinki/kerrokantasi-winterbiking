@@ -515,8 +515,10 @@ function parseComments(data) {
     });
 
     // Parse any plugin specific data that comes in as a stringified json
-    if (feature.properties.hasOwnProperty('plugin_data')) {
-      feature.properties.plugin_data = (feature.properties.plugin_data === 'string') ? JSON.parse(feature.properties.plugin_data) : feature.properties.plugin_data;
+    if (feature.properties.hasOwnProperty('plugin_data') && feature.properties.plugin_data.length > 0) {
+      feature.properties.plugin_data = JSON.parse(feature.properties.plugin_data);
+    } else {
+      feature.properties.plugin_data = {};
     }
 
 

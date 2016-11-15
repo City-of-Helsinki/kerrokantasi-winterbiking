@@ -537,15 +537,15 @@ function parseComments(data) {
       feature.properties.linked_id = [feature.properties.linked_id];
     }
 
-    if (feature.properties.hasOwnProperty('created_at')) {
-      feature.properties.date_object = new Date(feature.properties.created_at); 
+    if (feature.properties.hasOwnProperty('plugin_data') && feature.properties.plugin_data.hasOwnProperty('comment_datetime')) {
+      feature.properties.created_at = feature.properties.plugin_data.comment_datetime;
     }
 
-    if (feature.properties.hasOwnProperty('plugin_data') && feature.properties.plugin_data.hasOwnProperty('created_at')) {
-      feature.properties.date_object = new Date(feature.properties.plugin_data.created_at); 
+    if (feature.properties.hasOwnProperty('created_at')) {
+      feature.properties.date_object = new Date(feature.properties.created_at); 
+      feature.properties.date_string = pad(feature.properties.date_object.getDate(), 2) + '.' + pad(1 + feature.properties.date_object.getMonth(), 2) + '.' + feature.properties.date_object.getFullYear() + ' ' + pad(feature.properties.date_object.getHours(), 2) + ':' + pad(feature.properties.date_object.getMinutes(), 2) + ':' + pad(feature.properties.date_object.getSeconds(), 2);
     }
-    
-    feature.properties.date_string = pad(feature.properties.date_object.getDate(), 2) + '.' + pad(1 + feature.properties.date_object.getMonth(), 2) + '.' + feature.properties.date_object.getFullYear() + ' ' + pad(feature.properties.date_object.getHours(), 2) + ':' + pad(feature.properties.date_object.getMinutes(), 2) + ':' + pad(feature.properties.date_object.getSeconds(), 2);
+
 
     feature.properties.template = 'template-view-comment';
     
@@ -633,8 +633,8 @@ function prepareComment(data) {
   if (data.hasOwnProperty('date') && data.hasOwnProperty('time')) {
     var date = data.date;
     var time = data.time.split(':');
-    var created_at = new Date(date.setHours(parseInt(time[0]), parseInt(time[1]))).toISOString();
-    comment.plugin_data = { created_at : created_at };
+    var comment_datetime = new Date(date.setHours(parseInt(time[0]), parseInt(time[1]))).toISOString();
+    comment.plugin_data = { comment_datetime : comment_datetime };
   }
 
   return { comment : comment };

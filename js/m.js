@@ -514,6 +514,13 @@ function parseComments(data) {
       }
     });
 
+    // Parse any plugin specific data that comes in as a stringified json
+    if (feature.properties.hasOwnProperty('plugin_data')) {
+      feature.properties.plugin_data = JSON.parse(feature.properties.plugin_data);
+      console.log(feature.properties);
+    }
+
+
     // Include style information for determining which colors to use 
     if (feature.properties.hasOwnProperty('label')) {
       var label = feature.properties.label;
@@ -635,6 +642,10 @@ function prepareComment(data) {
     var time = data.time.split(':');
     var comment_datetime = new Date(date.setHours(parseInt(time[0]), parseInt(time[1]))).toISOString();
     comment.plugin_data = { comment_datetime : comment_datetime };
+  }
+
+  if (comment.hasOwnProperty('plugin_data')) {
+    comment.plugin_data = JSON.stringify(comment.plugin_data);
   }
 
   return { comment : comment };

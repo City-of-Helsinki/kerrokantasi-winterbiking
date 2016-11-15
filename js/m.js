@@ -516,8 +516,7 @@ function parseComments(data) {
 
     // Parse any plugin specific data that comes in as a stringified json
     if (feature.properties.hasOwnProperty('plugin_data')) {
-      feature.properties.plugin_data = JSON.parse(feature.properties.plugin_data);
-      console.log(feature.properties);
+      feature.properties.plugin_data = (feature.properties.plugin_data === 'string') ? JSON.parse(feature.properties.plugin_data) : feature.properties.plugin_data;
     }
 
 

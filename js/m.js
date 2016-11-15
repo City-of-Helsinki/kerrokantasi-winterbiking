@@ -551,7 +551,7 @@ function parseComments(data) {
 
     if (feature.properties.hasOwnProperty('created_at')) {
       feature.properties.date_object = new Date(feature.properties.created_at); 
-      feature.properties.date_string = pad(feature.properties.date_object.getDate(), 2) + '.' + pad(1 + feature.properties.date_object.getMonth(), 2) + '.' + feature.properties.date_object.getFullYear() + ' ' + pad(feature.properties.date_object.getHours(), 2) + ':' + pad(feature.properties.date_object.getMinutes(), 2) + ':' + pad(feature.properties.date_object.getSeconds(), 2);
+      feature.properties.date_string = pad(feature.properties.date_object.getDate(), 2) + '.' + pad(1 + feature.properties.date_object.getMonth(), 2) + '.' + feature.properties.date_object.getFullYear() + ' ' + pad(feature.properties.date_object.getHours(), 2) + ':' + pad(feature.properties.date_object.getMinutes(), 2);
     }
 
 
@@ -641,7 +641,7 @@ function prepareComment(data) {
   if (data.hasOwnProperty('date') && data.hasOwnProperty('time')) {
     var date = data.date;
     var time = data.time.split(':');
-    var comment_datetime = new Date(date.setHours(parseInt(time[0]), parseInt(time[1]))).toISOString();
+    var comment_datetime = new Date(date.setHours(parseInt(time[0]), parseInt(time[1]), 0)).toISOString();
     comment.plugin_data = { comment_datetime : comment_datetime };
   }
 

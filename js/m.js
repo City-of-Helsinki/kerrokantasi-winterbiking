@@ -527,7 +527,11 @@ function parseComments(data) {
       var label = feature.properties.label;
       if (label.id == 60) label.color = '#0B5';
       if (label.id == 61) label.color = '#F69930'; //F44
-      feature.properties.title = (label.label) ? label.label : 'Muu palaute';
+      var title = label.label
+      if (typeof title === 'object') {
+        title = title.fi
+      }
+      feature.properties.title = (title) ? title : 'Muu palaute';
     } else {
       feature.properties.title = 'Muu palaute';
     }

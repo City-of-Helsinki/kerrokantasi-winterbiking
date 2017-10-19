@@ -354,7 +354,7 @@ M = function(settings) {
         properties.rating = rating;
       
       } else if (properties.style) {
-        properties.style.color = '#0078A8'; // brand-primary = 004485, brand-info = 04A1D4, kerrokantasi navbar = #005eb8
+        properties.style.color = '#0072c6'; // brand-coat color
       }
 
       if (properties.style) {
@@ -525,8 +525,8 @@ function parseComments(data) {
     // Include style information for determining which colors to use 
     if (feature.properties.hasOwnProperty('label')) {
       var label = feature.properties.label;
-      if (label.id == 60) label.color = '#0B5';
-      if (label.id == 61) label.color = '#F69930'; //F44
+      if (label.id == 60) label.color = '#009246'; // brand-tram color
+      if (label.id == 61) label.color = '#fd4f00'; // brand-metro color
       var title = label.label
       if (typeof title === 'object') {
         title = title.fi

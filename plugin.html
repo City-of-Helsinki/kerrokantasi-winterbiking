@@ -81,7 +81,7 @@
 				
 					<br />
 
-					<a href="#tab-pane-map" class="btn btn-success btn-lg btn-block" aria-controls="tab-pane-map" role="tab" data-toggle="tab">Valmis</a>
+					<a href="#tab-pane-map" class="btn btn-tram btn-lg btn-block" aria-controls="tab-pane-map" role="tab" data-toggle="tab">Valmis</a>
 
 				</div>
 
@@ -119,17 +119,17 @@
 		
 		{{{content}}}
 
-		<button class="btn btn-vote btn-block btn-success" data-action="submit-rating" data-label="60" data-title="Väylä kunnossa">
+		<button class="btn btn-vote btn-block btn-tram" data-action="submit-rating" data-label="60" data-title="Väylä kunnossa">
 			<span class="btn-meta pull-right"><i class="fa fa-thumbs-o-up"></i> {{rating_60}}</span>
 			Väylä kunnossa
 		</button>
 
-		<button class="btn btn-vote btn-block btn-warning" data-action="submit-rating" data-label="61" data-title="Väylä hoitamatta">
+		<button class="btn btn-vote btn-block btn-metro" data-action="submit-rating" data-label="61" data-title="Väylä hoitamatta">
 			<span class="btn-meta pull-right"><i class="fa fa-thumbs-o-down"></i> {{rating_61}}</span>
 			Väylä hoitamatta
 		</button>
 
-		<button class="btn btn-vote btn-block btn-info" data-action="add-comment">
+		<button class="btn btn-vote btn-block btn-coat" data-action="add-comment">
 			<span class="btn-meta pull-right"><i class="fa fa-map-marker"></i></span>
 			Lisää muu merkintä
 		</button>
@@ -163,7 +163,7 @@
 
 			<div class="display-table-cell vertical-middle">
 
-				<button class="btn btn-info pull-right" data-action="submit-vote"><span class="btn-meta"><i class="fa fa-thumbs-o-up"></i> {{n_votes}}</span></button>
+				<button class="btn btn-coat pull-right" data-action="submit-vote"><span class="btn-meta"><i class="fa fa-thumbs-o-up"></i> {{n_votes}}</span></button>
 
 			</div>
 
@@ -229,7 +229,7 @@
 
 			<div class="text-right">
 				<button class="btn btn-link" type="reset" id="form-add-comment-cancel" tabindex="7" data-dismiss="popup"><i class="fa fa-remove"></i> Peruuta</button>
-				<button class="btn btn-success" type="submit" id="form-add-comment-submit" tabindex="8" data-action="submit-comment" disabled><i class="fa fa-check"></i> Lähetä</button>
+				<button class="btn btn-tram" type="submit" id="form-add-comment-submit" tabindex="8" data-action="submit-comment" disabled><i class="fa fa-check"></i> Lähetä</button>
 			</div>
 
 		</form>

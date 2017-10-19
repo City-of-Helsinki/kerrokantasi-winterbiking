@@ -51,6 +51,24 @@ label {
 	font-weight: 400;
 }
 
+.btn-coat {
+	color: #fff;
+	background-color: #0072c6;
+	border-color: #0072c6;
+}
+
+.btn-tram {
+	color: #fff;
+	background-color: #009246;
+	border-color: #009246;
+}
+
+.btn-metro {
+	color: #fff;
+	background-color: #fd4f00;
+	border-color: #fd4f00;
+}
+
 
 .comment-details {
 	margin: 0;
